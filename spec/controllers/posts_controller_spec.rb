@@ -8,34 +8,34 @@ RSpec.describe PostsController do
       category: "Non-Fiction"
     }
   end
-  let(:found) { Post.find(@article.id) }
+  let(:found) { Post.find(@post.id) }
 
-  before { @article = Post.create!(attributes) }
+  before { @post = Post.create(attributes) }
 
   describe "showing a post" do
     it "shows a post" do
-      get :show, params: { id: @article.id }
-      expect(found).to eq(@article)
+      get :show, params: { id: @post.id }
+      expect(found).to eq(@post)
     end
   end
 
   describe "making valid updates" do
     let(:new_attributes) do
       attributes.merge(
-        id: @article.id,
+        id: @post.id,
         title: "Fifteen Ways to Transcend Corporeal Form",
         category: "Fiction"
       )
     end
 
     it "updates successfully" do
-      @article.update(new_attributes)
+      @post.update(new_attributes)
       expect(found.title).to eq(new_attributes[:title])
     end
 
     it "redirects to show page" do
       patch :update, params: new_attributes
-      expect(response).to redirect_to(post_path(@article))
+      expect(response).to redirect_to(post_path(@post))
     end
   end
 
@@ -48,10 +48,10 @@ RSpec.describe PostsController do
       )
     end
 
-    before { @article.update(bad_attributes) }
+    before { @post.update(bad_attributes) }
 
     it "does not save" do
-      expect(@article).to be_changed
+      expect(@post).to be_changed
     end
 
     it "does not update" do
@@ -59,19 +59,19 @@ RSpec.describe PostsController do
     end
 
     it "has an error for missing title" do
-      expect(@article.errors[:title]).to_not be_empty
+      expect(@post.errors[:title]).to_not be_empty
     end
 
     it "has an error for too short content" do
-      expect(@article.errors[:content]).to_not be_empty
+      expect(@post.errors[:content]).to_not be_empty
     end
 
     it "has an error for invalid category" do
-      expect(@article.errors[:category]).to_not be_empty
+      expect(@post.errors[:category]).to_not be_empty
     end
 
     it "renders the form again" do
-      patch :update, params: bad_attributes.merge(id: @article.id)
+      patch :update, params: bad_attributes.merge(id: @post.id)
       expect(response).to render_template(:edit)
     end
   end
